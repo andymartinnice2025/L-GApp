@@ -399,8 +399,10 @@ const WIDGET_SRC = "https://github.com/Cognigy/click-to-call-widget/releases/lat
 const IRIS_ENDPOINT = "https://endpoint-trial.cognigy.ai/0089dfc9dd211b310ee6a5aa03de6a9bddb4e0b1e759760e52ec2eec09f9161c";
 /* Same ntfy topics show_on_page already reads/writes for the calculator page, reused here so Iris's
    existing tool wiring works unmodified — she just finds figures already there when she checks. */
-const LG_STATE_TOPIC = "lg-calc-state-p7v2q1";
-const LG_TOPIC = "lg-calc-9k4m2x";
+/* Namespaced per channel so a stale calculator (web) session can never bleed
+   state into the in-app view, or vice versa, if both happen to be open. */
+const LG_STATE_TOPIC = "lg-calc-state-p7v2q1-inapp";
+const LG_TOPIC = "lg-calc-9k4m2x-inapp";
 
 /* "Already signed in" demo profile — Paul, 58, ~£100k, matching the brief's UC1 numbers. */
 const PROFILE = { firstName: "Paul", lastName: "Barlow", age: 58, pot: 100000 };
