@@ -27,6 +27,7 @@
   /* ---------- Home tab (behind the notification) ---------- */
   .appTop{display:flex;justify-content:space-between;align-items:center;padding:10px 18px 6px}
   .umbrella{width:30px;height:30px}
+  .lgLogo{height:26px;width:auto;display:block;object-fit:contain}
   .topIcons{display:flex;gap:14px;font-size:18px;color:var(--ink)}
   .homeBody{flex:1;overflow:auto;padding:10px 18px 90px}
   .noMatchCard{background:#fff;border-radius:20px;padding:22px 18px;text-align:left}
@@ -246,7 +247,7 @@
       </div>
       <!-- L&G in-app notification -->
       <div class="notifBanner" id="notifBanner">
-        <div class="nicon">🌂</div>
+        <div class="nicon"><img src="https://companieslogo.com/img/orig/LGEN.L-52642af5.png?t=1780676415" alt="L&amp;G" style="width:22px;height:22px;object-fit:contain"></div>
         <div class="nbody">
           <div class="ntitle"><span>Legal &amp; General</span><span id="notifTime">now</span></div>
           <div class="ntext">Have you thought about your retirement options? Tap to take a quick look.</div>
@@ -259,10 +260,7 @@
   <div class="homeScreen" id="homeScreen">
     <div class="statusbar"><span id="clock2">15:46</span><span>🔇 📶 🔋49</span></div>
     <div class="appTop">
-      <svg class="umbrella" viewBox="0 0 40 40"><path d="M20 4C10 4 3 12 3 18h34C37 12 30 4 20 4Z" fill="#0076D6"/>
-        <path d="M3 18h9L8 18Z" fill="#D81E27"/><path d="M12 18h9L16 18Z" fill="#F2A900"/>
-        <path d="M21 18h9L25 18Z" fill="#00714A"/><rect x="19" y="18" width="2" height="16" rx="1" fill="#333"/>
-        <path d="M19 34c0 2 3 2 3 0" stroke="#333" stroke-width="2" fill="none"/></svg>
+      <img class="lgLogo" src="https://companieslogo.com/img/orig/LGEN.L-52642af5.png?t=1780676415" alt="Legal &amp; General">
       <div class="topIcons"><span>🔔</span><span>👤</span></div>
     </div>
     <div class="homeBody">
@@ -305,6 +303,10 @@
   <!-- PLAN screen (post-auth) -->
   <div class="planScreen" id="planScreen">
     <div class="statusbar"><span></span><span>🔇 📶 🔋49</span></div>
+    <div class="appTop">
+      <img class="lgLogo" src="https://companieslogo.com/img/orig/LGEN.L-52642af5.png?t=1780676415" alt="Legal &amp; General">
+      <div class="topIcons"><span>🔔</span><span>👤</span></div>
+    </div>
     <div class="planBody">
       <h1>Plan</h1>
       <p class="sub">Save, plan and manage your money for today and your financial future</p>
@@ -709,6 +711,7 @@ byId("nomCheckbox").addEventListener("change", e => {
     if (msg.action === "nominate_set") { setNomination(msg.name, msg.relationship); return; }
     if (msg.action === "focus") {
       if (["annuity","drawdown","cash"].indexOf(msg.target) > -1) { callFocusKey = [msg.target]; applyFocus(callFocusKey); }
+      else if (msg.target === "results") { callFocusKey = null; applyFocus(null); }
       return;
     }
     if (msg.action === "compare" && Array.isArray(msg.targets)) { callFocusKey = msg.targets; applyFocus(callFocusKey); return; }
