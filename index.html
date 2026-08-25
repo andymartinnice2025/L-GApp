@@ -394,8 +394,9 @@
 "use strict";
 /* ============ CONFIG ============ */
 const WIDGET_SRC = "https://github.com/Cognigy/click-to-call-widget/releases/latest/download/webRTCWidget.js";
-/* Same Iris agent already used by the retirement calculator — voiceGateway2 endpoint, not a new agent. */
-const IRIS_ENDPOINT = "https://endpoint-trial.cognigy.ai/28d62b0c2e364b78650de8c6b285fcbfed41290eb475fd45fd5aa5f0808c4179";
+/* Same Iris agent as the retirement calculator, but its OWN endpoint (VoiceGatewayInApp) so the
+   flow can tell in-app calls apart from web calls via input.URLToken and greet accordingly. */
+const IRIS_ENDPOINT = "https://endpoint-trial.cognigy.ai/0089dfc9dd211b310ee6a5aa03de6a9bddb4e0b1e759760e52ec2eec09f9161c";
 /* Same ntfy topics show_on_page already reads/writes for the calculator page, reused here so Iris's
    existing tool wiring works unmodified — she just finds figures already there when she checks. */
 const LG_STATE_TOPIC = "lg-calc-state-p7v2q1";
