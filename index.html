@@ -352,7 +352,7 @@
           </label>
         </div>
 
-        <div class="caption" id="callCaption">Say hello to start.</div>
+        <div class="caption" id="callCaption">Connecting…</div>
       </div>
     </div>
   </div>
@@ -470,9 +470,15 @@ new MutationObserver(quarantineCognigyDom).observe(document.body, { childList:tr
 /* ============ live caption (last thing said) — the cards are the star here,
    not a scrolling transcript, so this just shows the latest line ============ */
 let lastBotText = "";
+let heardFirstSpeech = false;
 function addLine(who, text){
   const raw = String(text||"").trim();
   if (!raw) return;
+  if (!heardFirstSpeech) {
+    heardFirstSpeech = true;
+    const startBtn = byId("btnStartCall");
+    startBtn.textContent = "Live";
+  }
   const cap = byId("callCaption");
   if (who === "user") {
     lastBotText = "";
@@ -724,20 +730,16 @@ byId("btnAskIris").addEventListener("click", () => {
     const wait = setInterval(() => {
       const btn = findStartButton();
       if (btn) {
-        byId("btnStartCall").disabled = false;
         clearInterval(wait);
         btn.click();
         quarantineCognigyDom();
+        const startBtn = byId("btnStartCall");
+        startBtn.textContent = "Initiating…";
+        startBtn.disabled = true;
       }
     }, 200);
     setTimeout(() => clearInterval(wait), 10000);
   }).catch(() => {});
 });
 byId("btnCloseCall").addEventListener("click", () => byId("callOverlay").classList.remove("show"));
-byId("btnStartCall").addEventListener("click", () => { const b = findStartButton(); if (b) b.click(); quarantineCognigyDom(); });
-byId("btnEndCall").addEventListener("click", () => { const b = findEndButton(); if (b) b.click(); });
-
-})();
-</script>
-</body>
-</html>
+byId("btnStartCall").addE
