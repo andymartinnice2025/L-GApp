@@ -161,10 +161,23 @@
              text-align:center;overflow:auto;padding-top:6px}
   .explain-card.playing .ec-detail{display:flex}
 
+  /* ---------- call landing view (policy record look, pre discussion) ---------- */
+  .callWelcome{display:none;flex-direction:column;background:#fff;border:1.5px solid var(--line);
+               border-radius:14px;padding:16px 18px;flex:1;justify-content:center;gap:2px}
+  .callWelcome.show{display:flex}
+  .cwHead{font-size:11.5px;letter-spacing:.4px;color:var(--muted);font-weight:700;
+          text-transform:uppercase;margin:0 0 10px}
+  .cwRow{display:flex;justify-content:space-between;font-size:13.5px;padding:7px 0;
+         border-bottom:1px dashed var(--line)}
+  .cwRow:last-child{border-bottom:none}
+  .cwRow span{color:var(--muted)}
+  .cwRow b{color:var(--ink);font-weight:700;text-align:right}
+
   /* ---------- nomination panel ---------- */
   .nomPanel{display:none;background:#fff;border:1.5px solid var(--lg-blue);border-radius:14px;
             padding:14px 16px;flex:0 0 auto}
   .nomPanel.show{display:block}
+  .nomFor{font-size:11.5px;letter-spacing:.3px;color:var(--muted);font-weight:700;text-transform:uppercase;margin:0 0 6px}
   .nomPanel h4{font-size:14px;margin:0 0 10px;font-family:var(--serif)}
   .nomRow{display:flex;justify-content:space-between;font-size:13.5px;padding:6px 0;
           border-bottom:1px dashed var(--line)}
@@ -332,6 +345,20 @@
           <button class="btn ghost" id="btnEndCall">End call</button>
         </div>
 
+        <!-- Landing view for the call — shown until the customer actually
+             starts engaging with an option, so the first thing on screen
+             looks like a real policy record, not an empty jump straight
+             to figures. Swaps out for the options view the moment Iris
+             sends any real focus/set/compare command. -->
+        <div class="callWelcome" id="callWelcome">
+          <div class="cwHead">Reviewing pension</div>
+          <div class="cwRow"><span>Policyholder</span><b id="cwName">Paul Barlow</b></div>
+          <div class="cwRow"><span>Scheme</span><b>Budget Mart workplace pension</b></div>
+          <div class="cwRow"><span>Also holds</span><b>Life insurance policy</b></div>
+          <div class="cwRow"><span>Age</span><b id="cwAge">58</b></div>
+          <div class="cwRow"><span>Pension pot</span><b id="cwPot">£100,000</b></div>
+        </div>
+
         <div class="insightHeadline" id="insightHeadline">
           Age <b id="ihAge">58</b> &middot; Pot <b id="ihPot">£100,000</b>
         </div>
@@ -343,6 +370,7 @@
              the tick is a real, deliberate action the customer takes on
              screen themselves, not something voice alone can complete. -->
         <div class="nomPanel" id="nomPanel">
+          <div class="nomFor" id="nomFor">For Paul's pension</div>
           <h4>Nominate a beneficiary</h4>
           <div class="nomRow"><span>Name</span><b id="nomName">—</b></div>
           <div class="nomRow"><span>Relationship</span><b id="nomRel">—</b></div>
@@ -372,7 +400,7 @@ const LG_STATE_TOPIC = "lg-calc-state-p7v2q1";
 const LG_TOPIC = "lg-calc-9k4m2x";
 
 /* "Already signed in" demo profile — Paul, 58, ~£100k, matching the brief's UC1 numbers. */
-const PROFILE = { firstName: "Paul", age: 58, pot: 100000 };
+const PROFILE = { firstName: "Paul", lastName: "Barlow", age: 58, pot: 100000 };
 
 const byId = id => document.getElementById(id);
 const gbp = n => "£" + Math.round(n).toLocaleString("en-GB");
@@ -612,28 +640,45 @@ function pushState(){
 }
 function setAgePot(age, pot){
   state = computeState(age != null ? age : state.age, pot != null ? pot : state.pot);
+  byId("cwAge").textContent = state.age;
+  byId("cwPot").textContent = gbp(state.pot);
   renderExplainer();
   pushState();
 }
 setAgePot(PROFILE.age, PROFILE.pot);
+/* The call opens on the landing view (looks like a real policy record),
+   not straight into the options grid — setAgePot above already needed
+   to run once to compute real figures, but the view itself only switches
+   over to options once Iris actually sends a real focus/set/compare
+   command during the live conversation. */
+showWelcomeView();
 
 /* ============ nomination panel — fields fill in live by voice, the tick
    is a real action the customer has to take themselves on screen. This is a
    full context switch, not an addition to the options view: the whole
    window changes to support it, same as focusing an option dominates the
    screen — talking about a beneficiary is a different topic entirely. ============ */
+function showWelcomeView(){
+  byId("callWelcome").classList.add("show");
+  byId("insightHeadline").style.display = "none";
+  byId("callExplainer").style.display = "none";
+  byId("nomPanel").classList.remove("show");
+}
 function showOptionsView(){
+  byId("callWelcome").classList.remove("show");
   byId("insightHeadline").style.display = "";
   byId("callExplainer").style.display = "";
   byId("nomPanel").classList.remove("show");
 }
 function showNominationView(){
+  byId("callWelcome").classList.remove("show");
   byId("insightHeadline").style.display = "none";
   byId("callExplainer").style.display = "none";
   byId("nomPanel").classList.add("show");
 }
 function renderNomination(){
   showNominationView();
+  byId("nomFor").textContent = "For " + PROFILE.firstName + " " + PROFILE.lastName + "'s pension, beneficiary";
   byId("nomName").textContent = nomination.name || "—";
   byId("nomRel").textContent = nomination.relationship || "—";
   byId("nomCheckbox").checked = nomination.signed;
