@@ -188,6 +188,13 @@
   .nomConfirm input{width:18px;height:18px}
   .nomConfirm.done{color:var(--lg-blue-dk)}
 
+  /* ---------- life policy panel ---------- */
+  .lifePanel{display:none;background:#fff;border:1.5px solid var(--lg-blue);border-radius:14px;
+             padding:14px 16px;flex:0 0 auto}
+  .lifePanel.show{display:block}
+  .lifePanel h4{font-size:14px;margin:0 0 10px;font-family:var(--serif)}
+  .lifeNote{font-size:11.5px;color:var(--muted);margin:10px 0 0;line-height:1.35}
+
   .explain-svg{width:100%;max-width:220px;height:90px;display:block;margin:0 auto 4px}
   .explain-fig-big{font-family:var(--serif);font-size:26px;font-weight:700;margin:2px 0}
   .explain-fig-big span{display:block;font-family:var(--sans);font-size:11.5px;font-weight:400;color:var(--muted)}
@@ -380,6 +387,19 @@
             <input type="checkbox" id="nomCheckbox">
             <span>I confirm this nomination is correct</span>
           </label>
+        </div>
+
+        <!-- Life policy panel — a different product to the pension, its own
+             screen entirely (same "whole window changes" principle), never
+             shown alongside the pension options or nomination panel. -->
+        <div class="lifePanel" id="lifePanel">
+          <div class="nomFor">Your life insurance policy</div>
+          <h4>Cover summary</h4>
+          <div class="nomRow"><span>Premium</span><b id="lifePremium">—</b></div>
+          <div class="nomRow"><span>Cover amount</span><b id="lifeCover">—</b></div>
+          <div class="nomRow"><span>Cover ends at age</span><b id="lifeEndAge">—</b></div>
+          <div class="nomRow"><span>Written in trust for</span><b id="lifeTrustFor">—</b></div>
+          <p class="lifeNote">This is a separate arrangement from your pension nomination, even if it names the same person.</p>
         </div>
 
         <div class="caption" id="callCaption">Connecting…</div>
@@ -668,18 +688,35 @@ function showWelcomeView(){
   byId("insightHeadline").style.display = "none";
   byId("callExplainer").style.display = "none";
   byId("nomPanel").classList.remove("show");
+  byId("lifePanel").classList.remove("show");
 }
 function showOptionsView(){
   byId("callWelcome").classList.remove("show");
   byId("insightHeadline").style.display = "";
   byId("callExplainer").style.display = "";
   byId("nomPanel").classList.remove("show");
+  byId("lifePanel").classList.remove("show");
 }
 function showNominationView(){
   byId("callWelcome").classList.remove("show");
   byId("insightHeadline").style.display = "none";
   byId("callExplainer").style.display = "none";
   byId("nomPanel").classList.add("show");
+  byId("lifePanel").classList.remove("show");
+}
+function showLifePolicyView(){
+  byId("callWelcome").classList.remove("show");
+  byId("insightHeadline").style.display = "none";
+  byId("callExplainer").style.display = "none";
+  byId("nomPanel").classList.remove("show");
+  byId("lifePanel").classList.add("show");
+}
+function renderLifePolicy(o){
+  showLifePolicyView();
+  byId("lifePremium").textContent = o.premium ? ("£" + o.premium + " a month") : "—";
+  byId("lifeCover").textContent = o.cover ? gbp(Number(o.cover)) : "—";
+  byId("lifeEndAge").textContent = o.endAge || "—";
+  byId("lifeTrustFor").textContent = o.trustFor || "—";
 }
 function renderNomination(){
   showNominationView();
@@ -712,6 +749,7 @@ byId("nomCheckbox").addEventListener("change", e => {
     let msg; try { msg = JSON.parse(d.message); } catch (err) { return; }
     if (msg.action === "set") { setAgePot(msg.age, msg.pot); return; }
     if (msg.action === "nominate_set") { setNomination(msg.name, msg.relationship); return; }
+    if (msg.action === "life_reveal") { renderLifePolicy(msg); return; }
     if (msg.action === "focus") {
       if (["annuity","drawdown","cash"].indexOf(msg.target) > -1) { callFocusKey = [msg.target]; applyFocus(callFocusKey); }
       else if (msg.target === "results") { callFocusKey = null; applyFocus(null); }
