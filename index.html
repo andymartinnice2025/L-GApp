@@ -425,10 +425,13 @@ const LG_STATE_TOPIC = "lg-calc-state-p7v2q1-inapp";
 const LG_TOPIC = "lg-calc-9k4m2x-inapp";
 
 /* "Already signed in" demo profile — Paul, 58, ~£100k, matching the brief's UC1 numbers. */
-const PROFILE = { firstName: "Paul", lastName: "Barlow", age: 58, pot: 100000 };
+const PROFILE = { firstName: "Paul", lastName: "Barlow", age: 58, pot: 127463.82 };
 
 const byId = id => document.getElementById(id);
 const gbp = n => "£" + Math.round(n).toLocaleString("en-GB");
+/* This persona is always the real, already verified figure, never an
+   illustrative estimate, so the pot display genuinely includes its pence. */
+const gbpExact = n => "£" + n.toLocaleString("en-GB", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 /* ============ notification triggers, fired on cue from the trigger portal ============
    Neither banner appears on a timer any more — each is shown only when the
@@ -573,7 +576,7 @@ function computeState(age, pot){
 }
 function renderHeadline(){
   byId("ihAge").textContent = state.age;
-  byId("ihPot").textContent = gbp(state.pot);
+  byId("ihPot").textContent = gbpExact(state.pot);
 }
 function annuitySvg(){
   return '<svg class="explain-svg" viewBox="0 0 160 130">' +
@@ -666,7 +669,7 @@ function pushState(){
 function setAgePot(age, pot){
   state = computeState(age != null ? age : state.age, pot != null ? pot : state.pot);
   byId("cwAge").textContent = state.age;
-  byId("cwPot").textContent = gbp(state.pot);
+  byId("cwPot").textContent = gbpExact(state.pot);
   renderExplainer();
   pushState();
 }
@@ -830,11 +833,4 @@ byId("btnAskIris").addEventListener("click", () => {
     setTimeout(() => clearInterval(wait), 10000);
   }).catch(() => {});
 });
-byId("btnCloseCall").addEventListener("click", () => byId("callOverlay").classList.remove("show"));
-byId("btnStartCall").addEventListener("click", () => { const b = findStartButton(); if (b) b.click(); quarantineCognigyDom(); });
-byId("btnEndCall").addEventListener("click", () => { const b = findEndButton(); if (b) b.click(); });
-
-})();
-</script>
-</body>
-</html>
+byId("btnCloseCall").addEventListener("click", () => byId("callOverlay").classList.remove("sh
