@@ -833,4 +833,11 @@ byId("btnAskIris").addEventListener("click", () => {
     setTimeout(() => clearInterval(wait), 10000);
   }).catch(() => {});
 });
-byId("btnCloseCall").addEventListener("click", () => byId("callOverlay").classList.remove("sh
+byId("btnCloseCall").addEventListener("click", () => byId("callOverlay").classList.remove("show"));
+byId("btnStartCall").addEventListener("click", () => { const b = findStartButton(); if (b) b.click(); quarantineCognigyDom(); });
+byId("btnEndCall").addEventListener("click", () => { const b = findEndButton(); if (b) b.click(); });
+
+})();
+</script>
+</body>
+</html>
